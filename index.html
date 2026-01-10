@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>POS Error Support Chatbot</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="chat-header">
+            <i class="fas fa-robot"></i>
+            <div class="header-content">
+                <h1>POS Error Support Bot</h1>
+                <div class="subtitle">24/7 Automated Assistance</div>
+            </div>
+            <div class="status-dot"></div>
+        </div>
+        
+        <div class="chat-container">
+            <div class="chat-messages" id="chatMessages">
+                <div class="time-indicator" id="timeIndicator"></div>
+                <div class="welcome-message">
+                    POS Error Support Bot
+                </div>
+            </div>
+            
+            <div class="chat-input-area">
+                <input type="text" class="chat-input" id="userInput" placeholder="Type your error code or message...">
+                <button class="send-btn" id="sendBtn">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
