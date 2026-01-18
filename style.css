@@ -589,6 +589,53 @@ body {
     margin-bottom: 10px;
 }
 
+/* Step list styling */
+.step-list {
+    margin: 10px 0;
+    padding-left: 20px;
+}
+
+.step-list li {
+    margin-bottom: 8px;
+    color: #333;
+    font-size: clamp(13px, 3vw, 13.5px);
+    line-height: 1.5;
+}
+
+.step-list li:last-child {
+    margin-bottom: 0;
+}
+
+.flow-step ol {
+    counter-reset: step-counter;
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.flow-step ol li {
+    counter-increment: step-counter;
+    margin-bottom: 10px;
+    position: relative;
+    padding-left: 30px;
+}
+
+.flow-step ol li:before {
+    content: counter(step-counter);
+    background: var(--primary);
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
 /* Enhanced Responsive Design */
 @media (max-width: 480px) {
     body {
