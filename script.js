@@ -1,4 +1,4 @@
-// POS Error Codes Database - Updated with 104 flow
+// POS Error Codes Database - Updated with 104 and 399 flows
 const posErrorCodes = {
     "pos_error_codes": [
         {
@@ -62,7 +62,36 @@ const posErrorCodes = {
         {
             "code": "399",
             "message": "Download all parameters",
-            "explanation": "The terminal needs a full parameter update from the bank or service provider."
+            "explanation": "The terminal needs a full parameter update from the bank or service provider.",
+            "details": {
+                "errorTitle": "Error 399 Solution",
+                "description": "Follow the steps below to resolve Error 399 and restore POS functionality.",
+                "flow": {
+                    "step1": {
+                        "title": "Fix Date & Time",
+                        "actions": [
+                            "Go to Device Settings",
+                            "Select System",
+                            "Choose Date & Time",
+                            "Turn off Automatic Date & Time",
+                            "Ensure correct Date & Time (manually set if needed)",
+                            "Select Time Zone: Central Time (GMT)"
+                        ]
+                    },
+                    "step2": {
+                        "title": "Update TP Payments",
+                        "actions": [
+                            "Go to TP Payments",
+                            "Select Settings (bottom right)",
+                            "Choose Download All Parameters"
+                        ]
+                    },
+                    "step3": {
+                        "title": "You're Done!",
+                        "message": "Error 399 resolved. You can now start transacting."
+                    }
+                }
+            }
         },
         {
             "code": "null",
@@ -257,6 +286,32 @@ function showError104Flow() {
     addMessage(step1Html, false, true);
 }
 
+// Display error code 399 flow
+function showError399Flow() {
+    const error399 = posErrorCodes.pos_error_codes.find(e => e.code === "399");
+    const flow = error399.details.flow;
+    
+    // Step 1: Fix Date & Time
+    const step1Html = `<div class="flow-step">
+        <div class="flow-question"><i class="fas fa-clock"></i> ${flow.step1.title}</div>
+        <div class="flow-message">
+            <strong>Follow these steps carefully:</strong>
+            <ol class="step-list">
+                ${flow.step1.actions.map((action, index) => 
+                    `<li>${action}</li>`
+                ).join('')}
+            </ol>
+        </div>
+        <div class="flow-options-container">
+            <button class="flow-option" onclick="handle399Step1Complete()">
+                <i class="fas fa-check"></i> I've completed Step 1
+            </button>
+        </div>
+    </div>`;
+    
+    addMessage(step1Html, false, true);
+}
+
 // Handle 104 flow responses
 function handle104Response(response) {
     const typing = showTyping();
@@ -375,6 +430,75 @@ function handle104Step2Response(response) {
     }, 800);
 }
 
+// Handle 399 Step 1 completion
+function handle399Step1Complete() {
+    const typing = showTyping();
+    
+    setTimeout(() => {
+        removeTyping(typing);
+        const error399 = posErrorCodes.pos_error_codes.find(e => e.code === "399");
+        const flow = error399.details.flow;
+        
+        // Step 2: Update TP Payments
+        const step2Html = `<div class="flow-step">
+            <div class="flow-question"><i class="fas fa-mobile-alt"></i> ${flow.step2.title}</div>
+            <div class="flow-message">
+                <strong>Now update TP Payments:</strong>
+                <ol class="step-list">
+                    ${flow.step2.actions.map((action, index) => 
+                        `<li>${action}</li>`
+                    ).join('')}
+                </ol>
+            </div>
+            <div class="flow-options-container">
+                <button class="flow-option" onclick="handle399Step2Complete()">
+                    <i class="fas fa-check"></i> I've completed Step 2
+                </button>
+                <button class="flow-option no" onclick="showMainOptions()">
+                    <i class="fas fa-times"></i> Cancel Process
+                </button>
+            </div>
+        </div>`;
+        
+        addMessage(step2Html, false, true);
+    }, 800);
+}
+
+// Handle 399 Step 2 completion
+function handle399Step2Complete() {
+    const typing = showTyping();
+    
+    setTimeout(() => {
+        removeTyping(typing);
+        const error399 = posErrorCodes.pos_error_codes.find(e => e.code === "399");
+        const flow = error399.details.flow;
+        
+        // Step 3: Completion
+        const step3Html = `<div class="flow-complete">
+            <i class="fas fa-check-circle" style="color: #4caf50; font-size: 2.5em;"></i>
+            <div class="flow-message" style="font-size: 1.1em; font-weight: 600; color: #4caf50; margin: 15px 0;">
+                ${flow.step3.title}
+            </div>
+            <div class="flow-message">
+                ${flow.step3.message}
+            </div>
+            <div class="quick-options" style="margin-top: 20px;">
+                <div class="quick-option" onclick="selectOption('interpretation')">
+                    <i class="fas fa-search"></i> Check Another Code
+                </div>
+                <div class="quick-option" onclick="escalateToHuman()">
+                    <i class="fas fa-user-headset"></i> Need More Help?
+                </div>
+                <div class="quick-option" onclick="showMainOptions()">
+                    <i class="fas fa-home"></i> Main Menu
+                </div>
+            </div>
+        </div>`;
+        
+        addMessage(step3Html, false, true);
+    }, 800);
+}
+
 // Service information display
 function displayErrorResult(error, mode) {
     // Special handling for error 104
@@ -393,6 +517,35 @@ function displayErrorResult(error, mode) {
         resultHtml += `</div><br>${moeResponses.positive[Math.floor(Math.random() * moeResponses.positive.length)]}<br><br>
             <div class='quick-options'>
                 <div class='quick-option' onclick='start104Flow()'>
+                    <i class='fas fa-play-circle'></i> Start Resolution Flow
+                </div>
+                <div class='quick-option' onclick='selectOption("interpretation")'>
+                    <i class='fas fa-search'></i> Check Another Code
+                </div>
+                <div class='quick-option' onclick='selectOption("faq")'>
+                    <i class='fas fa-question-circle'></i> FAQ
+                </div>
+            </div>`;
+        
+        return resultHtml;
+    }
+    
+    // Special handling for error 399
+    if (error.code === "399") {
+        let resultHtml = `<div class='error-result'>
+            <div class='error-code'><i class='fas fa-exclamation-circle'></i> Error Code: 399</div>
+            <div class='error-message'><strong>${error.message}</strong></div>
+            <div class='error-explanation'><i class='fas fa-info-circle'></i> <strong>Interpretation:</strong> ${error.explanation}</div>`;
+        
+        if (error.details) {
+            resultHtml += `<div class='error-explanation' style="margin-top: 10px;">
+                <i class='fas fa-tools'></i> <strong>${error.details.errorTitle}:</strong> ${error.details.description}
+            </div>`;
+        }
+        
+        resultHtml += `</div><br>${moeResponses.positive[Math.floor(Math.random() * moeResponses.positive.length)]}<br><br>
+            <div class='quick-options'>
+                <div class='quick-option' onclick='start399Flow()'>
                     <i class='fas fa-play-circle'></i> Start Resolution Flow
                 </div>
                 <div class='quick-option' onclick='selectOption("interpretation")'>
@@ -442,6 +595,19 @@ function start104Flow() {
         addMessage("Starting resolution flow for Error 104...", true);
         setTimeout(() => {
             showError104Flow();
+        }, 500);
+    }, 1000);
+}
+
+// Start 399 flow
+function start399Flow() {
+    const typing = showTyping();
+    
+    setTimeout(() => {
+        removeTyping(typing);
+        addMessage("Starting resolution flow for Error 399...", true);
+        setTimeout(() => {
+            showError399Flow();
         }, 500);
     }, 1000);
 }
@@ -839,5 +1005,8 @@ window.sendMessage = sendMessage;
 window.handleKeyPress = handleKeyPress;
 window.addMessage = addMessage;
 window.start104Flow = start104Flow;
+window.start399Flow = start399Flow;
 window.handle104Response = handle104Response;
 window.handle104Step2Response = handle104Step2Response;
+window.handle399Step1Complete = handle399Step1Complete;
+window.handle399Step2Complete = handle399Step2Complete;
