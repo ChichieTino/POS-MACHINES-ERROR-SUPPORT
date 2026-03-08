@@ -1,115 +1,107 @@
 // POS Error Codes Database - Updated with 104 and 399 flows
 const posErrorCodes = {
-    "pos_error_codes": [
-        {
-            "code": "117",
-            "message": "Incorrect PIN",
-            "explanation": "The customer entered an incorrect PIN. Another attempt is required."
-        },
-        {
-            "code": "107",
-            "message": "Insufficient funds",
-            "explanation": "The account balance is not enough to complete the transaction."
-        },
-        {
-            "code": "100",
-            "message": "Do not honour / Insufficient funds or dormant account",
-            "explanation": "The bank declined the transaction due to low balance or the account being dormant. Customer must visit the branch."
-        },
-        {
-            "code": "104",
-            "message": "Machine not enabled for international transactions",
-            "explanation": "The POS terminal is restricted from processing international cards.",
-            "details": {
-                "errorTitle": "International Card Processing Restricted",
-                "description": "This POS terminal is restricted from processing international cards.",
-                "flow": {
-                    "step1": {
-                        "question": "Do you want to activate your POS machine for international cards?",
-                        "options": ["YES", "NO"]
+  "pos_error_codes": [
+    {
+        "code": "117",
+        "message": "Incorrect PIN",
+        "explanation": "The customer entered an incorrect PIN. Another attempt is required."
+    },
+    {
+        "code": "107",
+        "message": "Insufficient funds",
+        "explanation": "The account balance is not enough to complete the transaction."
+    },
+    {
+        "code": "100",
+        "message": "Do not honour / Insufficient funds or dormant account",
+        "explanation": "The bank declined the transaction due to low balance or the account being dormant. Customer must visit the branch."
+    },
+    {
+        "code": "104",
+        "message": "Machine not enabled for international transactions",
+        "explanation": "The POS terminal is restricted from processing international cards.",
+        "details": {
+            "errorTitle": "International Card Processing Restricted",
+            "description": "This POS terminal is restricted from processing international cards.",
+            "flow": {
+                "step1": {
+                    "question": "Do you want to activate your POS machine for international cards?",
+                    "options": ["YES", "NO"]
+                },
+                "step2": {
+                    "condition": "YES",
+                    "message": "Activating your POS for international cards comes with additional charges.",
+                    "charges": {
+                        "visa": "2%",
+                        "mastercard": "2.5%"
                     },
-                    "step2": {
-                        "condition": "YES",
-                        "message": "Activating your POS for international cards comes with additional charges.",
-                        "charges": {
-                            "visa": "2%",
-                            "mastercard": "2.5%"
-                        },
-                        "confirmationQuestion": "Do you still want to proceed with registration?",
-                        "options": ["YES", "NO"]
-                    },
-                    "step3": {
-                        "condition": "YES",
-                        "action": "Contact your Relationship Manager to start the registration process."
-                    },
-                    "step4": {
-                        "condition": "NO",
-                        "message": "No worries! Happy transacting!"
-                    }
+                    "confirmationQuestion": "Do you still want to proceed with registration?",
+                    "options": ["YES", "NO"]
+                },
+                "step3": {
+                    "condition": "YES",
+                    "action": "Contact your Relationship Manager to start the registration process."
+                },
+                "step4": {
+                    "condition": "NO",
+                    "message": "No worries! Happy transacting!"
                 }
             }
-        },
-        {
-            "code": "122",
-            "message": "Change software – RKI not activated",
-            "explanation": "The terminal requires RKI activation or software configuration before use."
-        },
-        {
-            "code": "109",
-            "message": "Machine disabled",
-            "explanation": "The terminal is not enabled for transactions; activation is needed."
-        },
-        {
-            "code": "399",
-            "message": "Download all parameters",
-            "explanation": "The terminal needs a full parameter update from the bank or service provider.",
-            "details": {
-                "errorTitle": "Error 399 Solution",
-                "description": "Follow the steps below to resolve Error 399 and restore POS functionality.",
-                "flow": {
-                    "step1": {
-                        "title": "Fix Date & Time",
-                        "actions": [
-                            "Go to Device Settings",
-                            "Select System",
-                            "Choose Date & Time",
-                            "Turn off Automatic Date & Time",
-                            "Ensure correct Date & Time (manually set if needed)",
-                            "Select Time Zone: Central Time (GMT)"
-                        ]
-                    },
-                    "step2": {
-                        "title": "Update TP Payments",
-                        "actions": [
-                            "Go to TP Payments",
-                            "Select Settings (bottom right)",
-                            "Choose Download All Parameters"
-                        ]
-                    },
-                    "step3": {
-                        "title": "You're Done!",
-                        "message": "Error 399 resolved. You can now start transacting."
-                    }
-                }
-            }
-        },
-        {
-            "code": "null",
-            "message": "Action code null",
-            "explanation": "The terminal returned no action code. Usually indicates a configuration or communication issue."
-        },
-        {
-            "code": "108",
-            "message": "Communication failure",
-            "explanation": "The POS terminal failed to communicate with the bank switch or network."
-        },
-        {
-            "code": "109",
-            "message": "Terminal disabled",
-            "explanation": "The POS device is not authorised for transactions. Needs reactivation."
         }
-    ]
-};
+    },
+    {
+        "code": "122",
+        "message": "Change software – RKI not activated",
+        "explanation": "The terminal requires RKI activation or software configuration before use."
+    },
+    {
+        "code": "109",
+        "message": "Machine disabled",
+        "explanation": "The terminal is not enabled for transactions; activation is needed."
+    },
+    {
+        "code": "399",
+        "message": "Download all parameters",
+        "explanation": "The terminal needs a full parameter update from the bank or service provider."
+    },
+
+    {
+        "code": "111",
+        "message": "Invalid card number",
+        "explanation": "The payment was declined because the card number provided is invalid. Verify that the card number is entered correctly."
+    },
+    {
+        "code": "101",
+        "message": "Expired card",
+        "explanation": "The payment failed because the card used has expired. Ask the customer to use a valid, non-expired card."
+    },
+    {
+        "code": "908",
+        "message": "Routing error",
+        "explanation": "The transaction could not be routed to the appropriate bank or payment network for authorization. Kindly contact your relationship manager."
+    },
+    {
+        "code": "909",
+        "message": "Issuer or switch inoperative",
+        "explanation": "The transaction could not be processed because Ecocash is temporarily unavailable or not responding. Kindly retry later."
+    },
+
+    {
+        "code": "null",
+        "message": "Action code null",
+        "explanation": "The terminal returned no action code. Usually indicates a configuration or communication issue."
+    },
+    {
+        "code": "108",
+        "message": "Communication failure",
+        "explanation": "The POS terminal failed to communicate with the bank switch or network."
+    },
+    {
+        "code": "109",
+        "message": "Terminal disabled",
+        "explanation": "The POS device is not authorised for transactions. Needs reactivation."
+    }
+];
 
 // Greeting responses based on tone and time
 const greetingResponses = {
@@ -1010,3 +1002,4 @@ window.handle104Response = handle104Response;
 window.handle104Step2Response = handle104Step2Response;
 window.handle399Step1Complete = handle399Step1Complete;
 window.handle399Step2Complete = handle399Step2Complete;
+
