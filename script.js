@@ -9,7 +9,7 @@ const posErrorCodes = {
         {
             "code": "107",
             "message": "Insufficient funds",
-            "explanation": "The account balance is not enough to complete the transaction."
+            "explanation": "The account balance is insufficient to complete the transaction."
         },
         {
             "code": "100",
@@ -126,10 +126,10 @@ const posErrorCodes = {
         {
             "code": "909",
             "message": "Issuer or Switch Inoperative",
-            "explanation": "The transaction could not be processed because Ecocash is temporarily unavailable or not responding. Kindly retry later."
+            "explanation": "The transaction could not be processed because the payment switch is temporarily unavailable or not responding. Kindly retry later."
         },
         {
-            "code": "null",
+            "code": "000",
             "message": "Action code null",
             "explanation": "The terminal returned no action code. Usually indicates a configuration or communication issue."
         },
@@ -139,13 +139,17 @@ const posErrorCodes = {
             "explanation": "The POS terminal failed to communicate with the bank switch or network."
         },
         {
-            "code": "109",
+            "code": "106",
+            "message": "Transaction not permitted to cardholder",
+            "explanation": "The cardholder is not authorized to perform this type of transaction. Ask customer to contact their bank."
+        },
+        {
+            "code": "110",
             "message": "Terminal disabled",
             "explanation": "The POS device is not authorised for transactions. Needs reactivation."
         }
     ]
 };
-
 // Greeting responses based on tone and time
 const greetingResponses = {
     formal: [
@@ -1045,4 +1049,5 @@ window.handle104Response = handle104Response;
 window.handle104Step2Response = handle104Step2Response;
 window.handle399Step1Complete = handle399Step1Complete;
 window.handle399Step2Complete = handle399Step2Complete;
+
 
