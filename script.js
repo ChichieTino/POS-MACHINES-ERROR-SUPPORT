@@ -17,6 +17,26 @@ const posErrorCodes = {
             "explanation": "The bank declined the transaction due to low balance or the account being dormant. Customer must visit the branch."
         },
         {
+            "code": "111",
+            "message": "Invalid Card Number",
+            "explanation": "The payment was declined because the card number provided is invalid. Verify the card number is entered correctly."
+        },
+        {
+            "code": "101",
+            "message": "Expired Card",
+            "explanation": "The payment was declined because the card has expired. Ask the customer to use a valid, non-expired card."
+        },
+        {
+            "code": "118",
+            "message": "Card not registered or activated",
+            "explanation": "The card being used is not registered or activated. Contact the card issuer for assistance."
+        },
+        {
+            "code": "200",
+            "message": "Card flagged for pick-up / Hotlisted card",
+            "explanation": "The card has been flagged for pick-up or placed on a hot list by the issuer. Politely ask the customer to use another payment method."
+        },
+        {
             "code": "104",
             "message": "Machine not enabled for international transactions",
             "explanation": "The POS terminal is restricted from processing international cards.",
@@ -92,6 +112,21 @@ const posErrorCodes = {
                     }
                 }
             }
+        },
+        {
+            "code": "902",
+            "message": "Refund Limit Exceeded",
+            "explanation": "The POS is trying to refund more money than it is allowed to refund for that EMV card transaction."
+        },
+        {
+            "code": "908",
+            "message": "Routing Error",
+            "explanation": "The transaction could not be routed to the appropriate bank or payment network for authorization. Kindly contact your Relationship Manager."
+        },
+        {
+            "code": "909",
+            "message": "Issuer or Switch Inoperative",
+            "explanation": "The transaction could not be processed because Ecocash is temporarily unavailable or not responding. Kindly retry later."
         },
         {
             "code": "null",
@@ -1010,3 +1045,4 @@ window.handle104Response = handle104Response;
 window.handle104Step2Response = handle104Step2Response;
 window.handle399Step1Complete = handle399Step1Complete;
 window.handle399Step2Complete = handle399Step2Complete;
+
