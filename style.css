@@ -861,3 +861,22 @@ body {
         padding: 14px 16px;
     }
 }
+.solution-text {
+    color: #1565C0;
+    font-weight: 500;
+    background: #e3f2fd;
+    padding: 2px 5px;
+    border-radius: 3px;
+}
+
+.rm-directory {
+    background: #f5f5f5;
+    padding: 10px;
+    border-radius: 8px;
+    margin: 10px 0;
+}
+
+.rm-found, .rm-not-found {
+    padding: 10px;
+    border-radius: 8px;
+}
