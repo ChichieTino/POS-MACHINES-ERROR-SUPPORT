@@ -1081,11 +1081,7 @@ function processUserMessage(message) {
             } else {
                 const notFoundHtml = `<div class='rm-result error'>
                     <i class='fas fa-exclamation-triangle'></i> No relationship manager found with the name "<strong>${message}</strong>".<br><br>
-                    Please check the name and try again, or contact our admin support:
-                    <div class='admin-contacts-mini' style='margin-top: 15px;'>
-                        <div><i class='fas fa-phone'></i> Admin 1: +263 77 350 1244</div>
-                        <div><i class='fas fa-phone'></i> Admin 2: +263 73 323 9654</div>
-                    </div>
+                    Please check the name and try again.
                     <div class='quick-options' style='margin-top: 15px;'>
                         <div class='quick-option' onclick='promptRMSearch()'>
                             <i class='fas fa-search'></i> Try Again
@@ -1210,3 +1206,4 @@ window.promptRMSearch = promptRMSearch;
 window.searchRelationshipManager = searchRelationshipManager;
 window.displayRelationshipManager = displayRelationshipManager;
 window.showAdminContacts = showAdminContacts;
+
