@@ -329,6 +329,7 @@ const sendBtn = document.getElementById('sendBtn');
 const timeIndicator = document.getElementById('timeIndicator');
 let currentMode = 'initial'; // 'initial', 'interpretation', 'solutions', 'faq'
 let conversationStarted = false;
+let pendingRMSearch = false; // Flag to indicate we're waiting for RM name input
 
 // Time-based greetings
 function getTimeBasedGreeting() {
@@ -359,72 +360,86 @@ function detectGreetingTone(message) {
     return 'friendly';
 }
 
-// Function to show relationship manager directory
-function showRelationshipManagerDirectory() {
-    const managers = posErrorCodes.relationshipManagers;
+// Function to search for relationship manager by name
+function searchRelationshipManager(name) {
+    const searchName = name.toLowerCase().trim();
+    const manager = posErrorCodes.relationshipManagers.find(rm => 
+        rm.name.toLowerCase().includes(searchName)
+    );
     
-    let rmHtml = `<div class='rm-directory'>
-        <div class='error-code'><i class='fas fa-users'></i> Relationship Manager Directory</div>
-        <div class='error-message'>Please select your Relationship Manager from the list below:</div>
-        <div class='rm-list'>`;
-    
-    managers.forEach((manager, index) => {
-        rmHtml += `
-            <div class='rm-item' onclick='selectRelationshipManager("${manager.name}", "${manager.phone}")'>
-                <div class='rm-name'><i class='fas fa-user-tie'></i> ${manager.name}</div>
-                <div class='rm-phone'>${manager.phone}</div>
-            </div>`;
-    });
-    
-    rmHtml += `</div>
-        <div class='quick-options' style='margin-top: 15px;'>
-            <div class='quick-option' onclick='goBack()'>
-                <i class='fas fa-arrow-left'></i> Back
-            </div>
-        </div>
-    </div>`;
-    
-    addMessage(rmHtml, false, true);
+    return manager;
 }
 
-// Function to handle relationship manager selection
-function selectRelationshipManager(name, phone) {
-    if (phone === "Not Available") {
-        addMessage(`<div class='rm-selected error'>
-            <i class='fas fa-exclamation-triangle'></i> ${name}'s contact is currently not available.<br>
-            Please select another Relationship Manager or contact our admin support.
-        </div>`, false, true);
+// Function to display relationship manager details
+function displayRelationshipManager(manager) {
+    if (manager.phone === "Not Available") {
+        const notAvailableHtml = `<div class='rm-result error'>
+            <i class='fas fa-exclamation-triangle'></i> <strong>${manager.name}</strong>'s contact is currently not available.<br><br>
+            Please try another name or contact our admin support:
+            <div class='admin-contacts-mini' style='margin-top: 15px;'>
+                <div><i class='fas fa-phone'></i> Admin 1: +263 77 350 1244</div>
+                <div><i class='fas fa-phone'></i> Admin 2: +263 73 323 9654</div>
+            </div>
+            <div class='quick-options' style='margin-top: 15px;'>
+                <div class='quick-option' onclick='promptRMSearch()'>
+                    <i class='fas fa-search'></i> Search Another RM
+                </div>
+                <div class='quick-option' onclick='showMainOptions()'>
+                    <i class='fas fa-home'></i> Main Menu
+                </div>
+            </div>
+        </div>`;
         
-        // Show admin contacts
-        setTimeout(() => {
-            showAdminContacts();
-        }, 1000);
+        addMessage(notAvailableHtml, false, true);
         return;
     }
     
-    const selectedHtml = `<div class='rm-selected success'>
-        <i class='fas fa-check-circle'></i> You've selected <strong>${name}</strong><br>
-        <div class='rm-contact-info'>
-            <i class='fas fa-phone-alt'></i> Contact: ${phone}<br><br>
+    const managerHtml = `<div class='rm-result success'>
+        <i class='fas fa-check-circle'></i> <strong>Relationship Manager Found!</strong><br><br>
+        <div class='rm-details'>
+            <div><i class='fas fa-user-tie'></i> <strong>Name:</strong> ${manager.name}</div>
+            <div><i class='fas fa-phone-alt'></i> <strong>Phone:</strong> ${manager.phone}</div>
+        </div>
+        <div class='rm-contact-info' style='margin-top: 15px;'>
             <strong>Next Steps:</strong>
             <ol style='margin-top: 10px;'>
                 <li>Call your Relationship Manager at the number above</li>
                 <li>Provide them with your merchant ID and terminal details</li>
-                <li>Explain the error you're experiencing</li>
-                <li>Follow their instructions to resolve the issue</li>
+                <li>Explain that you want to activate international transactions</li>
+                <li>Follow their instructions to complete the registration</li>
             </ol>
         </div>
         <div class='quick-options' style='margin-top: 15px;'>
-            <div class='quick-option' onclick='window.location.href="tel:${phone.replace(/\s/g, '')}"'>
+            <div class='quick-option' onclick='window.location.href="tel:${manager.phone.replace(/\s/g, '')}"'>
                 <i class='fas fa-phone'></i> Call Now
             </div>
-            <div class='quick-option' onclick='showRelationshipManagerDirectory()'>
-                <i class='fas fa-arrow-left'></i> Back to Directory
+            <div class='quick-option' onclick='promptRMSearch()'>
+                <i class='fas fa-search'></i> Search Another RM
+            </div>
+            <div class='quick-option' onclick='showMainOptions()'>
+                <i class='fas fa-home'></i> Main Menu
             </div>
         </div>
     </div>`;
     
-    addMessage(selectedHtml, false, true);
+    addMessage(managerHtml, false, true);
+}
+
+// Function to prompt for RM name
+function promptRMSearch() {
+    pendingRMSearch = true;
+    const promptHtml = `<div class='rm-prompt'>
+        <i class='fas fa-user-tie'></i> <strong>Enter Relationship Manager Name</strong><br><br>
+        Please type the full name of your Relationship Manager:<br>
+        <small>(e.g., "Susan Chiwakata", "Johaness Chingwe", etc.)</small>
+        <div class='quick-options' style='margin-top: 15px;'>
+            <div class='quick-option' onclick='showMainOptions()'>
+                <i class='fas fa-times'></i> Cancel
+            </div>
+        </div>
+    </div>`;
+    
+    addMessage(promptHtml, false, true);
 }
 
 // Function to show admin contacts
@@ -448,23 +463,16 @@ function showAdminContacts() {
     
     adminHtml += `</div>
         <div class='quick-options' style='margin-top: 15px;'>
-            <div class='quick-option' onclick='showRelationshipManagerDirectory()'>
-                <i class='fas fa-users'></i> Back to RMs
+            <div class='quick-option' onclick='promptRMSearch()'>
+                <i class='fas fa-search'></i> Search RM Again
+            </div>
+            <div class='quick-option' onclick='showMainOptions()'>
+                <i class='fas fa-home'></i> Main Menu
             </div>
         </div>
     </div>`;
     
     addMessage(adminHtml, false, true);
-}
-
-// Go back function
-function goBack() {
-    const typing = showTyping();
-    
-    setTimeout(() => {
-        removeTyping(typing);
-        addMessage(showMainOptions(), false, true);
-    }, 500);
 }
 
 // Display error code 104 flow
@@ -589,7 +597,7 @@ function handle104Step2Response(response) {
         const flow = error104.details.flow;
         
         if (response === 'YES') {
-            // Show step 3 with RM selection
+            // Show step 3 with RM search prompt
             const step3Html = `<div class="flow-step">
                 <div class="flow-message" style="background: #e8f5e9; border-left-color: #4caf50;">
                     <i class="fas fa-check-circle" style="color: #4caf50;"></i> 
@@ -597,11 +605,11 @@ function handle104Step2Response(response) {
                 </div>
                 <div class="flow-message" style="margin-top: 15px;">
                     <i class="fas fa-phone-alt"></i> <strong>Next Steps:</strong><br>
-                    Please select your Relationship Manager from the directory below:
+                    Please enter the name of your Relationship Manager below to get their contact details.
                 </div>
                 <div class="quick-options" style="margin-top: 10px;">
-                    <div class="quick-option" onclick='showRelationshipManagerDirectory()'>
-                        <i class="fas fa-users"></i> View Relationship Managers
+                    <div class="quick-option" onclick='promptRMSearch()'>
+                        <i class="fas fa-user-tie"></i> Enter RM Name
                     </div>
                 </div>
                 <div class="quick-options" style="margin-top: 20px;">
@@ -729,8 +737,8 @@ function displayErrorResult(error, mode) {
                 <div class='quick-option' onclick='start104Flow()'>
                     <i class='fas fa-play-circle'></i> Start Resolution Flow
                 </div>
-                <div class='quick-option' onclick='showRelationshipManagerDirectory()'>
-                    <i class='fas fa-user-tie'></i> Contact Relationship Manager
+                <div class='quick-option' onclick='promptRMSearch()'>
+                    <i class='fas fa-user-tie'></i> Find My RM
                 </div>
                 <div class='quick-option' onclick='selectOption("interpretation")'>
                     <i class='fas fa-search'></i> Check Another Code
@@ -794,8 +802,8 @@ function displayErrorResult(error, mode) {
     // Add appropriate buttons
     if (needsRM) {
         resultHtml += `<div class='quick-options'>
-            <div class='quick-option' onclick='showRelationshipManagerDirectory()'>
-                <i class='fas fa-user-tie'></i> Select Relationship Manager
+            <div class='quick-option' onclick='promptRMSearch()'>
+                <i class='fas fa-user-tie'></i> Find My RM
             </div>
             <div class='quick-option' onclick='selectOption("interpretation")'>
                 <i class='fas fa-search'></i> Check Another Code
@@ -856,8 +864,8 @@ function showAssistanceOptions() {
             <div class='quick-option' onclick='escalateToHuman()'>
                 <i class='fas fa-user-headset'></i> Contact Human Agent
             </div>
-            <div class='quick-option' onclick='showRelationshipManagerDirectory()'>
-                <i class='fas fa-user-tie'></i> Contact Relationship Manager
+            <div class='quick-option' onclick='promptRMSearch()'>
+                <i class='fas fa-user-tie'></i> Find My RM
             </div>
             <div class='quick-option' onclick='addMessage("Please try rephrasing your query or enter a different error code:", false)'>
                 <i class='fas fa-redo'></i> Rephrase Query
@@ -887,7 +895,7 @@ function escalateToHuman() {
     addMessage(escalationHtml, false, true);
 }
 
-// Main service options
+// Main service options - REMOVED RM from menu
 function showMainOptions() {
     const html = `Please select what you would like help with:
         <div class="quick-options">
@@ -902,9 +910,6 @@ function showMainOptions() {
             </div>
         </div>
         <div class="quick-options" style="margin-top: 8px;">
-            <div class="quick-option" onclick="showRelationshipManagerDirectory()">
-                <i class="fas fa-user-tie"></i> Contact RM
-            </div>
             <div class="quick-option" onclick="escalateToHuman()">
                 <i class="fas fa-user-headset"></i> Human Agent
             </div>
@@ -1141,6 +1146,36 @@ function processUserMessage(message) {
         
         const msg = message.toLowerCase().trim();
         
+        // Check if we're waiting for RM name input
+        if (pendingRMSearch) {
+            pendingRMSearch = false;
+            const manager = searchRelationshipManager(message);
+            
+            if (manager) {
+                displayRelationshipManager(manager);
+            } else {
+                const notFoundHtml = `<div class='rm-result error'>
+                    <i class='fas fa-exclamation-triangle'></i> No relationship manager found with the name "<strong>${message}</strong>".<br><br>
+                    Please check the name and try again, or contact our admin support:
+                    <div class='admin-contacts-mini' style='margin-top: 15px;'>
+                        <div><i class='fas fa-phone'></i> Admin 1: +263 77 350 1244</div>
+                        <div><i class='fas fa-phone'></i> Admin 2: +263 73 323 9654</div>
+                    </div>
+                    <div class='quick-options' style='margin-top: 15px;'>
+                        <div class='quick-option' onclick='promptRMSearch()'>
+                            <i class='fas fa-search'></i> Try Again
+                        </div>
+                        <div class='quick-option' onclick='showMainOptions()'>
+                            <i class='fas fa-home'></i> Main Menu
+                        </div>
+                    </div>
+                </div>`;
+                
+                addMessage(notFoundHtml, false, true);
+            }
+            return;
+        }
+        
         // Check for greetings
         if (!conversationStarted && (msg.includes('hi') || msg.includes('hello') || msg.includes('hey') || msg.includes('hie') || msg.includes('greetings') || msg.includes('good morning') || msg.includes('good afternoon') || msg.includes('good evening'))) {
             conversationStarted = true;
@@ -1173,12 +1208,6 @@ function processUserMessage(message) {
         // Check for human agent request
         if (msg.includes('human') || msg.includes('agent') || msg.includes('support')) {
             escalateToHuman();
-            return;
-        }
-        
-        // Check for relationship manager request
-        if (msg.includes('rm') || msg.includes('relationship manager') || msg.includes('manager')) {
-            showRelationshipManagerDirectory();
             return;
         }
         
@@ -1254,7 +1283,7 @@ window.handle104Response = handle104Response;
 window.handle104Step2Response = handle104Step2Response;
 window.handle399Step1Complete = handle399Step1Complete;
 window.handle399Step2Complete = handle399Step2Complete;
-window.showRelationshipManagerDirectory = showRelationshipManagerDirectory;
-window.selectRelationshipManager = selectRelationshipManager;
+window.promptRMSearch = promptRMSearch;
+window.searchRelationshipManager = searchRelationshipManager;
+window.displayRelationshipManager = displayRelationshipManager;
 window.showAdminContacts = showAdminContacts;
-window.goBack = goBack;
