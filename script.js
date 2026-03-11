@@ -231,16 +231,6 @@ const moeResponses = {
         "Hello there! <i class='fas fa-star moe-element'></i> Ready to solve some errors!",
         "Hey hey! <i class='fas fa-heart moe-element'></i> What error code can I help you with?"
     ],
-    interpretation: [
-        "Great! <i class='fas fa-search moe-element'></i> I'll help interpret error codes for you!",
-        "Interpretation mode activated! <i class='fas fa-microscope moe-element'></i>",
-        "Let me help you understand error codes! <i class='fas fa-book-reader moe-element'></i>"
-    ],
-    solutions: [
-        "Awesome! <i class='fas fa-tools moe-element'></i> Let's find solutions together!",
-        "Solutions mode activated! <i class='fas fa-wrench moe-element'></i>",
-        "Time to fix some errors! <i class='fas fa-magic moe-element'></i>"
-    ],
     positive: [
         "Found it! <i class='fas fa-check-circle moe-element'></i>",
         "Got it! <i class='fas fa-lightbulb moe-element'></i>",
@@ -327,7 +317,6 @@ const chatMessages = document.getElementById('chatMessages');
 const userInput = document.getElementById('userInput');
 const sendBtn = document.getElementById('sendBtn');
 const timeIndicator = document.getElementById('timeIndicator');
-let currentMode = 'initial'; // 'initial', 'interpretation', 'solutions', 'faq'
 let conversationStarted = false;
 let pendingRMSearch = false; // Flag to indicate we're waiting for RM name input
 
@@ -382,7 +371,7 @@ function displayRelationshipManager(manager) {
             </div>
             <div class='quick-options' style='margin-top: 15px;'>
                 <div class='quick-option' onclick='promptRMSearch()'>
-                    <i class='fas fa-search'></i> Search Another RM
+                    <i class='fas fa-search'></i> Search Again
                 </div>
                 <div class='quick-option' onclick='showMainOptions()'>
                     <i class='fas fa-home'></i> Main Menu
@@ -431,7 +420,6 @@ function promptRMSearch() {
     const promptHtml = `<div class='rm-prompt'>
         <i class='fas fa-user-tie'></i> <strong>Enter Relationship Manager Name</strong><br><br>
         Please type the full name of your Relationship Manager:<br>
-        <small>(e.g., "Susan Chiwakata", "Johaness Chingwe", etc.)</small>
         <div class='quick-options' style='margin-top: 15px;'>
             <div class='quick-option' onclick='showMainOptions()'>
                 <i class='fas fa-times'></i> Cancel
@@ -464,7 +452,7 @@ function showAdminContacts() {
     adminHtml += `</div>
         <div class='quick-options' style='margin-top: 15px;'>
             <div class='quick-option' onclick='promptRMSearch()'>
-                <i class='fas fa-search'></i> Search RM Again
+                <i class='fas fa-search'></i> Search Again
             </div>
             <div class='quick-option' onclick='showMainOptions()'>
                 <i class='fas fa-home'></i> Main Menu
@@ -573,8 +561,8 @@ function handle104Response(response) {
                     ${flow.step4.message}
                 </div>
                 <div class="quick-options" style="margin-top: 15px;">
-                    <div class="quick-option" onclick="selectOption('interpretation')">
-                        <i class="fas fa-search"></i> Check Another Code
+                    <div class="quick-option" onclick='promptRMSearch()'>
+                        <i class="fas fa-user-tie"></i> Find My RM
                     </div>
                     <div class="quick-option" onclick="showMainOptions()">
                         <i class="fas fa-home"></i> Main Menu
@@ -616,8 +604,8 @@ function handle104Step2Response(response) {
                     <div class="quick-option" onclick="escalateToHuman()">
                         <i class="fas fa-user-headset"></i> Contact Admin Support
                     </div>
-                    <div class="quick-option" onclick="selectOption('interpretation')">
-                        <i class="fas fa-search"></i> Check Another Code
+                    <div class="quick-option" onclick="showMainOptions()">
+                        <i class="fas fa-home"></i> Main Menu
                     </div>
                 </div>
             </div>`;
@@ -631,8 +619,8 @@ function handle104Step2Response(response) {
                     ${flow.step4.message}
                 </div>
                 <div class="quick-options" style="margin-top: 15px;">
-                    <div class="quick-option" onclick="selectOption('interpretation')">
-                        <i class="fas fa-search"></i> Check Another Code
+                    <div class="quick-option" onclick='promptRMSearch()'>
+                        <i class="fas fa-user-tie"></i> Find My RM
                     </div>
                     <div class="quick-option" onclick="showMainOptions()">
                         <i class="fas fa-home"></i> Main Menu
@@ -698,8 +686,8 @@ function handle399Step2Complete() {
                 ${flow.step3.message}
             </div>
             <div class="quick-options" style="margin-top: 20px;">
-                <div class="quick-option" onclick="selectOption('interpretation')">
-                    <i class="fas fa-search"></i> Check Another Code
+                <div class="quick-option" onclick='promptRMSearch()'>
+                    <i class="fas fa-user-tie"></i> Find My RM
                 </div>
                 <div class="quick-option" onclick="escalateToHuman()">
                     <i class="fas fa-user-headset"></i> Need More Help?
@@ -714,8 +702,8 @@ function handle399Step2Complete() {
     }, 800);
 }
 
-// Service information display with blue solutions
-function displayErrorResult(error, mode) {
+// Service information display with interpretation in black and solution in blue
+function displayErrorResult(error) {
     // Special handling for error 104
     if (error.code === "104") {
         let resultHtml = `<div class='error-result'>
@@ -740,8 +728,8 @@ function displayErrorResult(error, mode) {
                 <div class='quick-option' onclick='promptRMSearch()'>
                     <i class='fas fa-user-tie'></i> Find My RM
                 </div>
-                <div class='quick-option' onclick='selectOption("interpretation")'>
-                    <i class='fas fa-search'></i> Check Another Code
+                <div class='quick-option' onclick='showMainOptions()'>
+                    <i class='fas fa-home'></i> Main Menu
                 </div>
             </div>`;
         
@@ -769,11 +757,11 @@ function displayErrorResult(error, mode) {
                 <div class='quick-option' onclick='start399Flow()'>
                     <i class='fas fa-play-circle'></i> Start Resolution Flow
                 </div>
-                <div class='quick-option' onclick='selectOption("interpretation")'>
-                    <i class='fas fa-search'></i> Check Another Code
+                <div class='quick-option' onclick='promptRMSearch()'>
+                    <i class='fas fa-user-tie'></i> Find My RM
                 </div>
-                <div class='quick-option' onclick='selectOption("faq")'>
-                    <i class='fas fa-question-circle'></i> FAQ
+                <div class='quick-option' onclick='showMainOptions()'>
+                    <i class='fas fa-home'></i> Main Menu
                 </div>
             </div>`;
         
@@ -785,19 +773,13 @@ function displayErrorResult(error, mode) {
                     error.code === "908" || error.code === "109" || 
                     error.code === "110" || error.code === "122";
     
-    // Regular error display for other codes
+    // Regular error display for other codes - always show both interpretation and solution
     let resultHtml = `<div class='error-result'>
         <div class='error-code'><i class='fas fa-exclamation-circle'></i> Error Code: ${error.code === "null" ? "Null/Empty" : error.code}</div>
-        <div class='error-message'><strong>${error.message}</strong></div>`;
-    
-    if(mode === 'interpretation') {
-        resultHtml += `<div class='error-interpretation'><i class='fas fa-info-circle'></i> <strong>Interpretation:</strong> ${error.explanation}</div>`;
-    } else {
-        // Show solution in blue
-        resultHtml += `<div class='error-solution'><i class='fas fa-wrench'></i> <strong>Solution:</strong> ${error.explanation}</div>`;
-    }
-    
-    resultHtml += `</div><br>${moeResponses.help[Math.floor(Math.random() * moeResponses.help.length)]}<br><br>`;
+        <div class='error-message'><strong>${error.message}</strong></div>
+        <div class='error-interpretation'><i class='fas fa-info-circle'></i> <strong>Interpretation:</strong> ${error.explanation}</div>
+        <div class='error-solution'><i class='fas fa-wrench'></i> <strong>Solution:</strong> ${error.explanation}</div>
+    </div><br>${moeResponses.help[Math.floor(Math.random() * moeResponses.help.length)]}<br><br>`;
     
     // Add appropriate buttons
     if (needsRM) {
@@ -805,23 +787,14 @@ function displayErrorResult(error, mode) {
             <div class='quick-option' onclick='promptRMSearch()'>
                 <i class='fas fa-user-tie'></i> Find My RM
             </div>
-            <div class='quick-option' onclick='selectOption("interpretation")'>
-                <i class='fas fa-search'></i> Check Another Code
-            </div>
-            <div class='quick-option' onclick='selectOption("faq")'>
-                <i class='fas fa-question-circle'></i> FAQ
+            <div class='quick-option' onclick='showMainOptions()'>
+                <i class='fas fa-home'></i> Main Menu
             </div>
         </div>`;
     } else {
         resultHtml += `<div class='quick-options'>
-            <div class='quick-option' onclick='selectOption("interpretation")'>
-                <i class='fas fa-search'></i> Check Another Code
-            </div>
-            <div class='quick-option' onclick='selectOption("solutions")'>
-                <i class='fas fa-tools'></i> More Solutions
-            </div>
-            <div class='quick-option' onclick='selectOption("faq")'>
-                <i class='fas fa-question-circle'></i> FAQ
+            <div class='quick-option' onclick='showMainOptions()'>
+                <i class='fas fa-home'></i> Main Menu
             </div>
         </div>`;
     }
@@ -883,9 +856,6 @@ function escalateToHuman() {
         Your request has been escalated to a human support agent! <i class='fas fa-heart moe-element'></i><br><br>
         An agent will contact you shortly. Average wait time: 2-3 minutes.<br><br>
         <div class='quick-options'>
-            <div class='quick-option' onclick='selectOption("faq")'>
-                <i class='fas fa-question-circle'></i> Browse FAQ While Waiting
-            </div>
             <div class='quick-option' onclick='showMainOptions()'>
                 <i class='fas fa-robot'></i> Continue with Bot
             </div>
@@ -895,26 +865,18 @@ function escalateToHuman() {
     addMessage(escalationHtml, false, true);
 }
 
-// Main service options - REMOVED RM from menu
+// Main service options - Simplified
 function showMainOptions() {
-    const html = `Please select what you would like help with:
+    const html = `Welcome to POS Error Support Bot. How can I help you today?
         <div class="quick-options">
-            <div class="quick-option" onclick="selectOption('interpretation')">
-                <i class="fas fa-search"></i> Error Interpretation
+            <div class="quick-option" onclick='promptRMSearch()'>
+                <i class="fas fa-user-tie"></i> Find My RM
             </div>
-            <div class="quick-option" onclick="selectOption('solutions')">
-                <i class="fas fa-tools"></i> Error Solutions
-            </div>
-            <div class="quick-option" onclick="selectOption('faq')">
-                <i class="fas fa-question-circle"></i> FAQ
-            </div>
-        </div>
-        <div class="quick-options" style="margin-top: 8px;">
             <div class="quick-option" onclick="escalateToHuman()">
                 <i class="fas fa-user-headset"></i> Human Agent
             </div>
-            <div class="quick-option" onclick="addMessage('You can try error codes like 117, 107, 100, or describe your issue in your own words!', false)">
-                <i class="fas fa-lightbulb"></i> Examples
+            <div class="quick-option" onclick="addMessage('Please enter an error code (like 117, 107, 100, etc.) or describe your issue:', false)">
+                <i class="fas fa-search"></i> Check Error
             </div>
         </div>`;
     
@@ -936,8 +898,8 @@ function showFAQ() {
         <div class='quick-option' onclick='showAllFAQ()'>
             <i class='fas fa-book-open'></i> Show All FAQs
         </div>
-        <div class='quick-option' onclick='selectOption("interpretation")'>
-            <i class='fas fa-search'></i> Check Error Code
+        <div class='quick-option' onclick='showMainOptions()'>
+            <i class='fas fa-home'></i> Main Menu
         </div>
     </div></div>`;
     
@@ -955,11 +917,8 @@ function showAllFAQ() {
     });
     
     faqHtml += `<br><div class='quick-options'>
-        <div class='quick-option' onclick='selectOption("interpretation")'>
-            <i class='fas fa-search'></i> Check Error Code
-        </div>
-        <div class='quick-option' onclick='selectOption("solutions")'>
-            <i class='fas fa-tools'></i> Get Solutions
+        <div class='quick-option' onclick='showMainOptions()'>
+            <i class='fas fa-home'></i> Main Menu
         </div>
     </div></div>`;
     
@@ -1015,11 +974,11 @@ function initChatbot() {
     // Show initial greeting after a short delay
     setTimeout(() => {
         const timeGreeting = getTimeBasedGreeting();
-        addMessage(`${timeGreeting}! Welcome to POS Error Support Bot. I'm here to help you understand and resolve POS error codes. How may I assist you today?`, false);
+        addMessage(`${timeGreeting}! Welcome to POS Error Support Bot. I'm here to help you understand and resolve POS error codes.`, false);
         
         // Show options after greeting
         setTimeout(() => {
-            addMessage("You can start by saying hello or choose from the options below:", false);
+            addMessage("How can I assist you today?", false);
             addMessage(showMainOptions(), false, true);
         }, 800);
     }, 1000);
@@ -1103,40 +1062,6 @@ function removeTyping(typingDiv) {
     }
 }
 
-// Handle option selection
-function selectOption(option) {
-    const typing = showTyping();
-    
-    setTimeout(() => {
-        removeTyping(typing);
-        
-        switch(option) {
-            case 'interpretation':
-                currentMode = 'interpretation';
-                addMessage("Error Interpretation", true);
-                addMessage(moeResponses.interpretation[Math.floor(Math.random() * moeResponses.interpretation.length)] + "<br><br>Please enter an error code (like 117, 107, etc.):<br><span class='mode-indicator'>Interpretation Mode</span>", false, true);
-                break;
-                
-            case 'solutions':
-                currentMode = 'solutions';
-                addMessage("Error Solutions", true);
-                addMessage(moeResponses.solutions[Math.floor(Math.random() * moeResponses.solutions.length)] + "<br><br>Enter an error code or describe your issue:<br><span class='mode-indicator'>Solutions Mode</span>", false, true);
-                break;
-                
-            case 'faq':
-                currentMode = 'faq';
-                addMessage("FAQ", true);
-                addMessage(showFAQ(), false, true);
-                break;
-                
-            case 'human':
-                addMessage("Human agent requested", true);
-                escalateToHuman();
-                break;
-        }
-    }, 1000);
-}
-
 // Process user message
 function processUserMessage(message) {
     const typing = showTyping();
@@ -1217,6 +1142,12 @@ function processUserMessage(message) {
             return;
         }
         
+        // Check for "Find My RM" command
+        if (msg.includes('find my rm') || msg.includes('find rm') || msg.includes('rm')) {
+            promptRMSearch();
+            return;
+        }
+        
         // Check for error code
         const error = findErrorCode(message);
         
@@ -1224,15 +1155,8 @@ function processUserMessage(message) {
             conversationStarted = true;
             const response = moeResponses.positive[Math.floor(Math.random() * moeResponses.positive.length)];
             
-            if (currentMode === 'interpretation') {
-                addMessage(`${response} Here's what this error means:`, false, true);
-            } else if (currentMode === 'solutions') {
-                addMessage(`${response} Here's how to fix this:`, false, true);
-            } else {
-                addMessage(`${response} I found this error in the database:`, false, true);
-            }
-            
-            addMessage(displayErrorResult(error, currentMode), false, true);
+            addMessage(`${response} Here's the information for this error:`, false, true);
+            addMessage(displayErrorResult(error), false, true);
         } else {
             // Error not found
             conversationStarted = true;
@@ -1270,7 +1194,6 @@ function handleKeyPress(e) {
 document.addEventListener('DOMContentLoaded', initChatbot);
 
 // Make functions available globally
-window.selectOption = selectOption;
 window.escalateToHuman = escalateToHuman;
 window.showMainOptions = showMainOptions;
 window.showAllFAQ = showAllFAQ;
