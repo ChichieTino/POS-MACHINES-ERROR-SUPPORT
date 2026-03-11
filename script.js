@@ -364,11 +364,7 @@ function displayRelationshipManager(manager) {
     if (manager.phone === "Not Available") {
         const notAvailableHtml = `<div class='rm-result error'>
             <i class='fas fa-exclamation-triangle'></i> <strong>${manager.name}</strong>'s contact is currently not available.<br><br>
-            Please try another name or contact our admin support:
-            <div class='admin-contacts-mini' style='margin-top: 15px;'>
-                <div><i class='fas fa-phone'></i> Admin 1: +263 77 350 1244</div>
-                <div><i class='fas fa-phone'></i> Admin 2: +263 73 323 9654</div>
-            </div>
+            Please try another name
             <div class='quick-options' style='margin-top: 15px;'>
                 <div class='quick-option' onclick='promptRMSearch()'>
                     <i class='fas fa-search'></i> Search Again
@@ -1206,4 +1202,5 @@ window.promptRMSearch = promptRMSearch;
 window.searchRelationshipManager = searchRelationshipManager;
 window.displayRelationshipManager = displayRelationshipManager;
 window.showAdminContacts = showAdminContacts;
+
 
